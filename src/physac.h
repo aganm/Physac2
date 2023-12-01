@@ -416,7 +416,7 @@ static double currentTime = 0.0;                            // Current time in m
 static uint64_t frequency = 0;                              // Hi-res clock frequency
 
 static double accumulator = 0.0;                            // Physics time step delta time accumulator
-static unsigned int stepsCount = 0;                         // Total physics steps processed
+static uint64_t stepsCount = 0;                             // Total physics steps processed
 static Vector2 gravityForce = { 0.0f, 9.81f };              // Physics world gravity force
 static PhysicsBody *bodies[PHYSAC_MAX_BODIES];              // Physics bodies pointers array
 static unsigned int physicsBodiesCount = 0;                 // Physics world current bodies counter
