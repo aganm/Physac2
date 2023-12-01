@@ -80,7 +80,7 @@
 **********************************************************************************************/
 
 #if !defined(PHYSAC_H)
-#define PHYSAC_H
+     #define PHYSAC_H
 
 // #define  PHYSAC_STATIC
 // #define  PHYSAC_NO_THREADS
@@ -2270,4 +2270,4 @@ static inline Vector2 Mat2MultiplyVector2(Mat2 matrix, Vector2 vector)
     return (Vector2){ matrix.m00*vector.x + matrix.m01*vector.y, matrix.m10*vector.x + matrix.m11*vector.y };
 }
 
-#endif  // PHYSAC_IMPLEMENTATION
+#endif // PHYSAC_IMPLEMENTATION
