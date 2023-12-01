@@ -458,8 +458,8 @@ PHYSACDEF PhysicsBody *CreatePhysicsBodyRectangle(Vector2 pos, float width, floa
         newBody->id = newId;
         newBody->enabled = true;
         newBody->position = pos;
-        newBody->velocity = (Vector2){ 0.0f };
-        newBody->force = (Vector2){ 0.0f };
+        newBody->velocity = (Vector2){ 0.0f, 0.0f };
+        newBody->force = (Vector2){ 0.0f, 0.0f };
         newBody->angularVelocity = 0.0f;
         newBody->torque = 0.0f;
         newBody->orient = 0.0f;
@@ -1060,6 +1060,8 @@ static PolygonData CreateRectanglePolygon(Vector2 pos, Vector2 size)
 // Physics loop thread function
 static void *PhysicsLoop(void *arg)
 {
+    (void)arg;
+
     #if defined(PHYSAC_DEBUG)
         printf("[PHYSAC] physics thread created successfully\n");
     #endif
