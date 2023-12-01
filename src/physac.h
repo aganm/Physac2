@@ -151,7 +151,7 @@ typedef struct PhysicsReference {
 } PhysicsReference;
 
 typedef struct PolygonData {
-    unsigned int vertexCount;                   // Current used vertex and normals count
+    int vertexCount;                            // Current used vertex and normals count
     Vector2 positions[PHYSAC_MAX_VERTICES];     // Polygon vertex positions vectors
     Vector2 normals[PHYSAC_MAX_VERTICES];       // Polygon vertex normals vectors
 } PolygonData;
@@ -193,7 +193,7 @@ typedef struct PhysicsManifold {
     float penetration;                          // Depth of penetration from collision
     Vector2 normal;                             // Normal direction vector from 'a' to 'b'
     Vector2 contacts[2];                        // Points of contact during collision
-    unsigned int contactsCount;                 // Current collision number of contacts
+    int contactsCount;                          // Current collision number of contacts
     float restitution;                          // Mixed restitution during collision
     float dynamicFriction;                      // Mixed dynamic friction during collision
     float staticFriction;                       // Mixed static friction during collision
@@ -297,23 +297,23 @@ PHYSACDEF void ClosePhysics(void);                                              
 
 static struct PhysicsBodyStore {
     PhysicsBody array[PHYSAC_MAX_BODIES];
-    unsigned int arrayCount;
-    unsigned int freelist[PHYSAC_MAX_BODIES];
-    unsigned int freelistCount;
+    int arrayCount;
+    int freelist[PHYSAC_MAX_BODIES];
+    int freelistCount;
 } bodyStore;
 
 static struct PhysicsManifoldStore {
     PhysicsManifold array[PHYSAC_MAX_MANIFOLDS];
-    unsigned int arrayCount;
-    unsigned int freelist[PHYSAC_MAX_MANIFOLDS];
-    unsigned int freelistCount;
+    int arrayCount;
+    int freelist[PHYSAC_MAX_MANIFOLDS];
+    int freelistCount;
 } manifoldStore;
 
 static struct PhysicsVertexStore {
     Vector2 array[PHYSAC_MAX_VERTICES];
-    unsigned int arrayCount;
-    unsigned int freelist[PHYSAC_MAX_VERTICES];
-    unsigned int freelistCount;
+    int arrayCount;
+    int freelist[PHYSAC_MAX_VERTICES];
+    int freelistCount;
 } vertexStore;
 
 PHYSACDEF void *PhysacStaticMalloc(size_t size)
@@ -378,19 +378,19 @@ PHYSACDEF void PhysacStaticFree(void *ptr)
     if ((ptr >= arrayRanges.bodyBegin && ptr < arrayRanges.bodyEnd) &&
         (bodyStore.freelistCount < PHYSAC_MAX_BODIES))
     {
-        unsigned int index = (ptr - arrayRanges.bodyBegin) / sizeof(PhysicsBody);
+        int index = (ptr - arrayRanges.bodyBegin) / sizeof(PhysicsBody);
         bodyStore.freelist[bodyStore.freelistCount ++] = index;
     }
     else if ((ptr >= arrayRanges.manifoldBegin && ptr < arrayRanges.manifoldEnd) &&
              (manifoldStore.freelistCount < PHYSAC_MAX_MANIFOLDS))
     {
-        unsigned int index = (ptr - arrayRanges.manifoldBegin) / sizeof(PhysicsManifold);
+        int index = (ptr - arrayRanges.manifoldBegin) / sizeof(PhysicsManifold);
         manifoldStore.freelist[manifoldStore.freelistCount ++] = index;
     }
     else if ((ptr >= arrayRanges.vertexBegin && ptr < arrayRanges.vertexEnd) &&
              (vertexStore.freelistCount < PHYSAC_MAX_VERTICES))
     {
-        unsigned int index = (ptr - arrayRanges.vertexBegin) / sizeof(Vector2);
+        int index = (ptr - arrayRanges.vertexBegin) / sizeof(Vector2);
         vertexStore.freelist[vertexStore.freelistCount ++] = index;
     }
     else
@@ -419,9 +419,9 @@ static double accumulator = 0.0;                            // Physics time step
 static uint64_t stepsCount = 0;                             // Total physics steps processed
 static Vector2 gravityForce = { 0.0f, 9.81f };              // Physics world gravity force
 static PhysicsBody *bodies[PHYSAC_MAX_BODIES];              // Physics bodies pointers array
-static unsigned int physicsBodiesCount = 0;                 // Physics world current bodies counter
+static int physicsBodiesCount = 0;                          // Physics world current bodies counter
 static PhysicsManifold *contacts[PHYSAC_MAX_MANIFOLDS];     // Physics manifolds pointers array
-static unsigned int physicsManifoldsCount = 0;              // Physics world current manifolds counter
+static int physicsManifoldsCount = 0;                       // Physics world current manifolds counter
 
 //----------------------------------------------------------------------------------
 // Module Internal Functions Declaration
