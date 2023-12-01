@@ -5,7 +5,7 @@
 WIP: This is a work in progress.
 
 Physac2 is a fork of the original [Physac](https://github.com/victorfisac/Physac) library by Victor Fisac.
-While I liked the original library, there was a variety of issues that I wanted to fix about it,
+While I liked the original library, there was a variety of things that I wanted to change,
 including API breaking changes which would break backwards compatibility with old code.
 Due to the breaking nature of the changes I want to make to Physac, I decided to make my own fork and call it Physac2.
 
