@@ -1,5 +1,7 @@
 <img src="https://github.com/victorfisac/Physac/blob/master/icon/physac_256x256.png">
 
+WIP: This is a work in progress.
+
 # Physac2
 
 Physac2 is a fork of the original [Physac](https://github.com/victorfisac/Physac) library by Victor Fisac.
