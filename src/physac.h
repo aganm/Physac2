@@ -146,9 +146,9 @@ typedef struct Mat2 {
     float m11;
 } Mat2;
 
-typedef struct PhysicsReference {
+typedef struct PhysicsRUID {
 	int id;
-} PhysicsReference;
+} PhysicsRUID;
 
 typedef struct PolygonData {
     int vertexCount;                            // Current used vertex and normals count
@@ -165,7 +165,7 @@ typedef struct PhysicsShape {
 } PhysicsShape;
 
 typedef struct PhysicsBody {
-    PhysicsReference id;                        // Reference unique identifier
+    PhysicsRUID id;                             // Reference unique identifier
     bool enabled;                               // Enabled dynamics state (collisions are calculated anyway)
     Vector2 position;                           // Physics body shape pivot
     Vector2 velocity;                           // Current linear velocity applied to position
@@ -187,7 +187,7 @@ typedef struct PhysicsBody {
 } PhysicsBody;
 
 typedef struct PhysicsManifold {
-    PhysicsReference id;                        // Reference unique identifier
+    PhysicsRUID id;                             // Reference unique identifier
     PhysicsBody *bodyA;                         // Manifold first physics body reference
     PhysicsBody *bodyB;                         // Manifold second physics body reference
     float penetration;                          // Depth of penetration from collision
@@ -515,7 +515,7 @@ PHYSACDEF PhysicsBody *CreatePhysicsBodyCircle(Vector2 pos, float radius, float 
     PhysicsBody *newBody = (PhysicsBody *)PHYSAC_MALLOC(sizeof(PhysicsBody));
     usedMemory += sizeof(PhysicsBody);
 
-    PhysicsReference newId = { FindAvailableBodyIndex() };
+    PhysicsRUID newId = { FindAvailableBodyIndex() };
     if (newId.id != -1)
     {
         // Initialize new body with generic values
@@ -566,7 +566,7 @@ PHYSACDEF PhysicsBody *CreatePhysicsBodyRectangle(Vector2 pos, float width, floa
     PhysicsBody *newBody = (PhysicsBody *)PHYSAC_MALLOC(sizeof(PhysicsBody));
     usedMemory += sizeof(PhysicsBody);
 
-    PhysicsReference newId = { FindAvailableBodyIndex() };
+    PhysicsRUID newId = { FindAvailableBodyIndex() };
     if (newId.id != -1)
     {
         // Initialize new body with generic values
@@ -654,7 +654,7 @@ PHYSACDEF PhysicsBody *CreatePhysicsBodyPolygon(Vector2 pos, float radius, int s
     PhysicsBody *newBody = (PhysicsBody *)PHYSAC_MALLOC(sizeof(PhysicsBody));
     usedMemory += sizeof(PhysicsBody);
 
-    PhysicsReference newId = { FindAvailableBodyIndex() };
+    PhysicsRUID newId = { FindAvailableBodyIndex() };
     if (newId.id != -1)
     {
         // Initialize new body with generic values
@@ -1016,7 +1016,7 @@ PHYSACDEF void DestroyPhysicsBody(PhysicsBody *body)
 {
     if (body != NULL)
     {
-        PhysicsReference id = body->id;
+        PhysicsRUID id = body->id;
         int index = -1;
 
         for (int i = 0; i < physicsBodiesCount; i++)
@@ -1376,7 +1376,7 @@ static PhysicsManifold *CreatePhysicsManifold(PhysicsBody *a, PhysicsBody *b)
     PhysicsManifold *newManifold = (PhysicsManifold *)PHYSAC_MALLOC(sizeof(PhysicsManifold));
     usedMemory += sizeof(PhysicsManifold);
 
-    PhysicsReference newId = { FindAvailableManifoldIndex() };
+    PhysicsRUID newId = { FindAvailableManifoldIndex() };
     if (newId.id != -1)
     {
         // Initialize new manifold with generic values
@@ -1409,7 +1409,7 @@ static void DestroyPhysicsManifold(PhysicsManifold *manifold)
 {
     if (manifold != NULL)
     {
-        PhysicsReference id = manifold->id;
+        PhysicsRUID id = manifold->id;
         int index = -1;
 
         for (int i = 0; i < physicsManifoldsCount; i++)
