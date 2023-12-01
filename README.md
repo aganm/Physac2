@@ -1,5 +1,21 @@
 <img src="https://github.com/victorfisac/Physac/blob/master/icon/physac_256x256.png">
 
+# Physac2
+
+Physac2 is a fork of the original [Physac](https://github.com/victorfisac/Physac) library by Victor Fisac.
+While I liked the original library, there was a variety of issues that I wanted to fix about it,
+including API breaking changes which would break backwards compatiblity with old code that may have relied on the API of Physac to remain stable.
+Due to the breaking nature of the changes I wanted to make to Physac, I decided to make my own fork and called it Physac 2.
+
+Here is a non exhaustive list of changes that I want to do in Physac2:
+- [ ] Remove hidden pointers in API typedefs, it is obfuscation making the code harder to read.
+- [ ] Remove random heap allocations, this is causing a lot unnecessary fragmentation.
+- [ ] Apply dangling pull requests in the Physac repository, credits in the source.
+- [ ] Remove coupling with pthread so that any threading library can be used.
+- [ ] Replace internal pointers by handles, [Handles are the better pointers](https://floooh.github.io/2018/06/17/handles-vs-pointers.html).
+- [ ] Replace API return types by handles, [Handles are the better pointers](https://floooh.github.io/2018/06/17/handles-vs-pointers.html).
+- [ ] Replace all the brute force search loops by faster algorithms.
+
 # Physac
 
 Physac is a small 2D physics engine written in pure C. The engine uses a fixed time-step thread loop to simluate physics.
