@@ -305,7 +305,7 @@ static unsigned int stepsCount = 0;                         // Total physics ste
 static Vector2 gravityForce = { 0.0f, 9.81f };              // Physics world gravity force
 static PhysicsBody *bodies[PHYSAC_MAX_BODIES];              // Physics bodies pointers array
 static unsigned int physicsBodiesCount = 0;                 // Physics world current bodies counter
-static PhysicsManifold *contacts[PHYSAC_MAX_MANIFOLDS];     // Physics bodies pointers array
+static PhysicsManifold *contacts[PHYSAC_MAX_MANIFOLDS];     // Physics manifolds pointers array
 static unsigned int physicsManifoldsCount = 0;              // Physics world current manifolds counter
 
 //----------------------------------------------------------------------------------
