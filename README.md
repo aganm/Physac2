@@ -16,6 +16,7 @@ Here is a non exhaustive list of changes that I want to do in Physac2:
 - [ ] Replace all the brute force search loops by faster algorithms.
 - [x] Fix pthread_join to block indefinitely, credits in the source.
 - [x] Add Emscripten support, credits in the source.
+- [ ] Do more manual formatting of the API to improve readability.
 
 # Physac
 
