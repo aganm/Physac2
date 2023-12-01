@@ -8,6 +8,7 @@ including API breaking changes which would break backwards compatibility with ol
 Due to the breaking nature of the changes I want to make to Physac, I decided to make my own fork and call it Physac2.
 
 Here is a non exhaustive list of changes that I want to do in Physac2:
+- [ ] Fix as many warnings as possible, 50+ in gcc.
 - [ ] Remove hidden pointers in API typedefs, it is obfuscation making the code harder to read.
 - [ ] Remove random heap allocations, this is causing a lot unnecessary fragmentation.
 - [ ] Remove coupling with pthread so that any threading library can be used.
