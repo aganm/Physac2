@@ -1202,6 +1202,7 @@ static void PhysicsStep(void)
     // Update current steps count
     stepsCount++;
 
+    // TODO: I could reset the storage count to 0... fucking ridiculous.
     // Clear previous generated collisions information
     for (int i = physicsManifoldsCount - 1; i >= 0; i--)
     {
