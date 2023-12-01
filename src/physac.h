@@ -54,6 +54,7 @@
 *       - define-private-public: added support for OSX
 *       - pamarcos: fixed implementation of physics steps
 *       - noshbar: fixed some memory leaks
+*       - Jake-Moss: fixed pthread_join to block indefinitely
 *
 *
 *   LICENSE: zlib/libpng
@@ -289,7 +290,7 @@ PHYSACDEF void ClosePhysics(void);                                              
 static pthread_t physicsThreadId;                           // Physics thread id
 #endif
 static unsigned int usedMemory = 0;                         // Total allocated dynamic memory
-static bool physicsThreadEnabled = false;                   // Physics thread enabled state
+static volatile bool physicsThreadEnabled = false;          // Physics thread enabled state
 static double baseTime = 0.0;                               // Offset time for MONOTONIC clock
 static double startTime = 0.0;                              // Start time in milliseconds
 static double deltaTime = 1.0/60.0/10.0 * 1000;             // Delta time used for physics steps, in milliseconds
