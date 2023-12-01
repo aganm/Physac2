@@ -10,7 +10,7 @@ Due to the breaking nature of the changes I want to make to Physac, I decided to
 Here is a non exhaustive list of changes that I want to do in Physac2:
 - [ ] Fix as many warnings as possible, 50+ in gcc.
 - [x] Remove hidden pointers in API typedefs, it is obfuscation making the code harder to read.
-- [ ] Remove random heap allocations, this is causing a lot unnecessary fragmentation.
+- [ ] Remove random heap allocations, this is causing a lot of unnecessary fragmentation.
 - [ ] Remove coupling with pthread so that any threading library can be used.
 - [ ] Replace internal pointers by handles, [Handles are the better pointers](https://floooh.github.io/2018/06/17/handles-vs-pointers.html).
 - [ ] Replace API return types by handles, [Handles are the better pointers](https://floooh.github.io/2018/06/17/handles-vs-pointers.html).
