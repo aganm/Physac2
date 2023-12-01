@@ -42,7 +42,7 @@ Physac API
 
 The PhysicsBody struct contains all dynamics information and collision shape. The user should use the following structure components:
 ```c
-typedef struct *PhysicsBody {
+typedef struct PhysicsBody {
     unsigned int id;
     bool enabled;                   // Enabled dynamics state (collisions are calculated anyway)
     Vector2 position;               // Physics body shape pivot
@@ -58,7 +58,7 @@ typedef struct *PhysicsBody {
     bool isGrounded;                // Physics grounded on other body state
     bool freezeOrient;              // Physics rotation constraint
     PhysicsShape shape;             // Physics body shape information (type, radius, vertices, normals)
-} *PhysicsBody;
+} PhysicsBody;
 ```
 The header contains a few customizable define values. I set the values that gived me the best results.
 
@@ -93,28 +93,28 @@ bool IsPhysicsEnabled(void);
 void SetPhysicsGravity(float x, float y);
 
 // Creates a new circle physics body with generic parameters
-PhysicsBody CreatePhysicsBodyCircle(Vector2 pos, float radius, float density);
+PhysicsBody *CreatePhysicsBodyCircle(Vector2 pos, float radius, float density);
 
 // Creates a new rectangle physics body with generic parameters
-PhysicsBody CreatePhysicsBodyRectangle(Vector2 pos, float width, float height, float density);
+PhysicsBody *CreatePhysicsBodyRectangle(Vector2 pos, float width, float height, float density);
 
 // Creates a new polygon physics body with generic parameters
-PhysicsBody CreatePhysicsBodyPolygon(Vector2 pos, float radius, int sides, float density);
+PhysicsBody *CreatePhysicsBodyPolygon(Vector2 pos, float radius, int sides, float density);
 
 // Adds a force to a physics body
-void PhysicsAddForce(PhysicsBody body, Vector2 force);
+void PhysicsAddForce(PhysicsBody *body, Vector2 force);
 
 // Adds a angular force to a physics body
-void PhysicsAddTorque(PhysicsBody body, float amount);
+void PhysicsAddTorque(PhysicsBody *body, float amount);
 
 // Shatters a polygon shape physics body to little physics bodies with explosion force
-void PhysicsShatter(PhysicsBody body, Vector2 position, float force);
+void PhysicsShatter(PhysicsBody *body, Vector2 position, float force);
 
 // Returns the current amount of created physics bodies
 int GetPhysicsBodiesCount(void);
 
 // Returns a physics body of the bodies pool at a specific index
-PhysicsBody GetPhysicsBody(int index);
+PhysicsBody *GetPhysicsBody(int index);
 
 // Returns the physics body shape type (PHYSICS_CIRCLE or PHYSICS_POLYGON)
 int GetPhysicsShapeType(int index);
@@ -123,13 +123,13 @@ int GetPhysicsShapeType(int index);
 int GetPhysicsShapeVerticesCount(int index);
 
 // Returns transformed position of a body shape (body position + vertex transformed position)
-Vector2 GetPhysicsShapeVertex(PhysicsBody body, int vertex);
+Vector2 GetPhysicsShapeVertex(PhysicsBody *body, int vertex);
 
 // Sets physics body shape transform based on radians parameter
-void SetPhysicsBodyRotation(PhysicsBody body, float radians);
+void SetPhysicsBodyRotation(PhysicsBody *body, float radians);
 
 // Unitializes and destroy a physics body
-void DestroyPhysicsBody(PhysicsBody body);
+void DestroyPhysicsBody(PhysicsBody *body);
 
 // Unitializes physics pointers and closes physics loop thread
 void ClosePhysics(void);
