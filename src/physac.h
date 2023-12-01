@@ -146,6 +146,10 @@ typedef struct Mat2 {
     float m11;
 } Mat2;
 
+typedef struct PhysicsReference {
+	unsigned int id;
+} PhysicsReference;
+
 typedef struct PolygonData {
     unsigned int vertexCount;                   // Current used vertex and normals count
     Vector2 positions[PHYSAC_MAX_VERTICES];     // Polygon vertex positions vectors
@@ -161,7 +165,7 @@ typedef struct PhysicsShape {
 } PhysicsShape;
 
 typedef struct PhysicsBody {
-    unsigned int id;                            // Reference unique identifier
+    PhysicsReference id;                        // Reference unique identifier
     bool enabled;                               // Enabled dynamics state (collisions are calculated anyway)
     Vector2 position;                           // Physics body shape pivot
     Vector2 velocity;                           // Current linear velocity applied to position
@@ -183,7 +187,7 @@ typedef struct PhysicsBody {
 } PhysicsBody;
 
 typedef struct PhysicsManifold {
-    unsigned int id;                            // Reference unique identifier
+    PhysicsReference id;                       // Reference unique identifier
     PhysicsBody *bodyA;                         // Manifold first physics body reference
     PhysicsBody *bodyB;                         // Manifold second physics body reference
     float penetration;                          // Depth of penetration from collision
@@ -511,8 +515,8 @@ PHYSACDEF PhysicsBody *CreatePhysicsBodyCircle(Vector2 pos, float radius, float 
     PhysicsBody *newBody = (PhysicsBody *)PHYSAC_MALLOC(sizeof(PhysicsBody));
     usedMemory += sizeof(PhysicsBody);
 
-    int newId = FindAvailableBodyIndex();
-    if (newId != -1)
+    PhysicsReference newId = { FindAvailableBodyIndex() };
+    if (newId.id != -1)
     {
         // Initialize new body with generic values
         newBody->id = newId;
@@ -545,7 +549,7 @@ PHYSACDEF PhysicsBody *CreatePhysicsBodyCircle(Vector2 pos, float radius, float 
         physicsBodiesCount++;
 
         #if defined(PHYSAC_DEBUG)
-            printf("[PHYSAC] created polygon physics body id %i\n", newBody->id);
+            printf("[PHYSAC] created polygon physics body id %i\n", newBody->id.id);
         #endif
     }
     #if defined(PHYSAC_DEBUG)
@@ -562,8 +566,8 @@ PHYSACDEF PhysicsBody *CreatePhysicsBodyRectangle(Vector2 pos, float width, floa
     PhysicsBody *newBody = (PhysicsBody *)PHYSAC_MALLOC(sizeof(PhysicsBody));
     usedMemory += sizeof(PhysicsBody);
 
-    int newId = FindAvailableBodyIndex();
-    if (newId != -1)
+    PhysicsReference newId = { FindAvailableBodyIndex() };
+    if (newId.id != -1)
     {
         // Initialize new body with generic values
         newBody->id = newId;
@@ -633,7 +637,7 @@ PHYSACDEF PhysicsBody *CreatePhysicsBodyRectangle(Vector2 pos, float width, floa
         physicsBodiesCount++;
 
         #if defined(PHYSAC_DEBUG)
-            printf("[PHYSAC] created polygon physics body id %i\n", newBody->id);
+            printf("[PHYSAC] created polygon physics body id %i\n", newBody->id.id);
         #endif
     }
     #if defined(PHYSAC_DEBUG)
@@ -650,8 +654,8 @@ PHYSACDEF PhysicsBody *CreatePhysicsBodyPolygon(Vector2 pos, float radius, int s
     PhysicsBody *newBody = (PhysicsBody *)PHYSAC_MALLOC(sizeof(PhysicsBody));
     usedMemory += sizeof(PhysicsBody);
 
-    int newId = FindAvailableBodyIndex();
-    if (newId != -1)
+    PhysicsReference newId = { FindAvailableBodyIndex() };
+    if (newId.id != -1)
     {
         // Initialize new body with generic values
         newBody->id = newId;
@@ -720,7 +724,7 @@ PHYSACDEF PhysicsBody *CreatePhysicsBodyPolygon(Vector2 pos, float radius, int s
         physicsBodiesCount++;
 
         #if defined(PHYSAC_DEBUG)
-            printf("[PHYSAC] created polygon physics body id %i\n", newBody->id);
+            printf("[PHYSAC] created polygon physics body id %i\n", newBody->id.id);
         #endif
     }
     #if defined(PHYSAC_DEBUG)
@@ -1012,12 +1016,12 @@ PHYSACDEF void DestroyPhysicsBody(PhysicsBody *body)
 {
     if (body != NULL)
     {
-        int id = body->id;
+        PhysicsReference id = body->id;
         int index = -1;
 
         for (int i = 0; i < physicsBodiesCount; i++)
         {
-            if (bodies[i]->id == id)
+            if (bodies[i]->id.id == id.id)
             {
                 index = i;
                 break;
@@ -1027,7 +1031,7 @@ PHYSACDEF void DestroyPhysicsBody(PhysicsBody *body)
         if (index == -1)
         {
             #if defined(PHYSAC_DEBUG)
-                printf("[PHYSAC] Not possible to find body id %i in pointers array\n", id);
+                printf("[PHYSAC] Not possible to find body id %i in pointers array\n", id.id);
             #endif
             return;
         }
@@ -1048,7 +1052,7 @@ PHYSACDEF void DestroyPhysicsBody(PhysicsBody *body)
         physicsBodiesCount--;
 
         #if defined(PHYSAC_DEBUG)
-            printf("[PHYSAC] destroyed physics body id %i\n", id);
+            printf("[PHYSAC] destroyed physics body id %i\n", id.id);
         #endif
     }
     #if defined(PHYSAC_DEBUG)
@@ -1099,7 +1103,7 @@ static int FindAvailableBodyIndex()
         // Check if current id already exist in other physics body
         for (int k = 0; k < physicsBodiesCount; k++)
         {
-            if (bodies[k]->id == currentId)
+            if (bodies[k]->id.id == currentId)
             {
                 currentId++;
                 break;
@@ -1348,7 +1352,7 @@ static int FindAvailableManifoldIndex()
         // Check if current id already exist in other physics body
         for (int k = 0; k < physicsManifoldsCount; k++)
         {
-            if (contacts[k]->id == currentId)
+            if (contacts[k]->id.id == currentId)
             {
                 currentId++;
                 break;
@@ -1372,8 +1376,8 @@ static PhysicsManifold *CreatePhysicsManifold(PhysicsBody *a, PhysicsBody *b)
     PhysicsManifold *newManifold = (PhysicsManifold *)PHYSAC_MALLOC(sizeof(PhysicsManifold));
     usedMemory += sizeof(PhysicsManifold);
 
-    int newId = FindAvailableManifoldIndex();
-    if (newId != -1)
+    PhysicsReference newId = { FindAvailableManifoldIndex() };
+    if (newId.id != -1)
     {
         // Initialize new manifold with generic values
         newManifold->id = newId;
@@ -1405,12 +1409,12 @@ static void DestroyPhysicsManifold(PhysicsManifold *manifold)
 {
     if (manifold != NULL)
     {
-        int id = manifold->id;
+        PhysicsReference id = manifold->id;
         int index = -1;
 
         for (int i = 0; i < physicsManifoldsCount; i++)
         {
-            if (contacts[i]->id == id)
+            if (contacts[i]->id.id == id.id)
             {
                 index = i;
                 break;
@@ -1420,7 +1424,7 @@ static void DestroyPhysicsManifold(PhysicsManifold *manifold)
         if (index == -1)
         {
             #if defined(PHYSAC_DEBUG)
-                printf("[PHYSAC] Not possible to manifold id %i in pointers array\n", id);
+                printf("[PHYSAC] Not possible to manifold id %i in pointers array\n", id.id);
             #endif
             return;
         }      
