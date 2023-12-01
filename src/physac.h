@@ -147,7 +147,7 @@ typedef struct Mat2 {
 } Mat2;
 
 typedef struct PhysicsReference {
-	unsigned int id;
+	int id;
 } PhysicsReference;
 
 typedef struct PolygonData {
