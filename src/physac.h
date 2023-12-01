@@ -1,6 +1,6 @@
 /**********************************************************************************************
 *
-*   Physac v1.1 - 2D Physics library for videogames
+*   Physac v2.0 - 2D Physics library for videogames
 *
 *   DESCRIPTION:
 *
