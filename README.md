@@ -4,7 +4,7 @@
 
 Physac2 is a fork of the original [Physac](https://github.com/victorfisac/Physac) library by Victor Fisac.
 While I liked the original library, there was a variety of issues that I wanted to fix about it,
-including API breaking changes which would break backwards compatiblity with old code that may have relied on the API of Physac to remain stable.
+including API breaking changes which would break backwards compatiblity with old code.
 Due to the breaking nature of the changes I wanted to make to Physac, I decided to make my own fork and called it Physac 2.
 
 Here is a non exhaustive list of changes that I want to do in Physac2:
