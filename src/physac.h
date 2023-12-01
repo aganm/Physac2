@@ -367,6 +367,8 @@ PHYSACDEF void InitPhysics(void)
         // NOTE: if defined, user will need to create a thread for PhysicsThread function manually
         // Create physics thread using POSIXS thread libraries
         pthread_create(&physicsThreadId, NULL, &PhysicsLoop, NULL);
+    #else
+	(void)PhysicsLoop; // unused warning
     #endif
 
     // Initialize high resolution timer
