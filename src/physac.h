@@ -370,9 +370,12 @@ PHYSACDEF void PhysacStaticFree(void *ptr)
         const void *manifoldBegin, *manifoldEnd;
         const void *vertexBegin, *vertexEnd;
     } arrayRanges = {
-	.bodyBegin = bodyStore.array, .bodyEnd = bodyStore.array + sizeof(bodyStore.array),
-	.manifoldBegin = manifoldStore.array, .manifoldEnd = manifoldStore.array + sizeof(manifoldStore.array),
-	.vertexBegin = vertexStore.array, .vertexEnd = vertexStore.array + sizeof(vertexStore.array),
+	.bodyBegin = (void *)bodyStore.array,
+	.bodyEnd = (void *)bodyStore.array + sizeof(bodyStore.array),
+	.manifoldBegin = (void *)manifoldStore.array,
+	.manifoldEnd = (void *)manifoldStore.array + sizeof(manifoldStore.array),
+	.vertexBegin = (void *)vertexStore.array,
+	.vertexEnd = (void *)vertexStore.array + sizeof(vertexStore.array),
     };
 
     if ((ptr >= arrayRanges.bodyBegin && ptr < arrayRanges.bodyEnd) &&
