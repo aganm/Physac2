@@ -187,7 +187,7 @@ typedef struct PhysicsBody {
 } PhysicsBody;
 
 typedef struct PhysicsManifold {
-    PhysicsReference id;                       // Reference unique identifier
+    PhysicsReference id;                        // Reference unique identifier
     PhysicsBody *bodyA;                         // Manifold first physics body reference
     PhysicsBody *bodyB;                         // Manifold second physics body reference
     float penetration;                          // Depth of penetration from collision
