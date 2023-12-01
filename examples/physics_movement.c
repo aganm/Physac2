@@ -15,10 +15,11 @@
 *
 ********************************************************************************************/
 
-#include "raylib.h"
-
+#define PHYSAC_STANDALONE
 #define PHYSAC_IMPLEMENTATION
 #include "physac.h"
+
+#include "raylib.h"
 
 #define VELOCITY    0.5f
 
@@ -40,11 +41,11 @@ int main()
     InitPhysics();
 
     // Create floor and walls rectangle physics body
-    PhysicsBody floor = CreatePhysicsBodyRectangle((Vector2){ screenWidth/2, screenHeight }, screenWidth, 100, 10);
-    PhysicsBody platformLeft = CreatePhysicsBodyRectangle((Vector2){ screenWidth*0.25f, screenHeight*0.6f }, screenWidth*0.25f, 10, 10);
-    PhysicsBody platformRight = CreatePhysicsBodyRectangle((Vector2){ screenWidth*0.75f, screenHeight*0.6f }, screenWidth*0.25f, 10, 10);
-    PhysicsBody wallLeft = CreatePhysicsBodyRectangle((Vector2){ -5, screenHeight/2 }, 10, screenHeight, 10);
-    PhysicsBody wallRight = CreatePhysicsBodyRectangle((Vector2){ screenWidth + 5, screenHeight/2 }, 10, screenHeight, 10);
+    PhysicsBody *floor = CreatePhysicsBodyRectangle((Vector2){ screenWidth/2, screenHeight }, screenWidth, 100, 10);
+    PhysicsBody *platformLeft = CreatePhysicsBodyRectangle((Vector2){ screenWidth*0.25f, screenHeight*0.6f }, screenWidth*0.25f, 10, 10);
+    PhysicsBody *platformRight = CreatePhysicsBodyRectangle((Vector2){ screenWidth*0.75f, screenHeight*0.6f }, screenWidth*0.25f, 10, 10);
+    PhysicsBody *wallLeft = CreatePhysicsBodyRectangle((Vector2){ -5, screenHeight/2 }, 10, screenHeight, 10);
+    PhysicsBody *wallRight = CreatePhysicsBodyRectangle((Vector2){ screenWidth + 5, screenHeight/2 }, 10, screenHeight, 10);
 
     // Disable dynamics to floor and walls physics bodies
     floor->enabled = false;
@@ -54,7 +55,7 @@ int main()
     wallRight->enabled = false;
 
     // Create movement physics body
-    PhysicsBody body = CreatePhysicsBodyRectangle((Vector2){ screenWidth/2, screenHeight/2 }, 50, 50, 1);
+    PhysicsBody *body = CreatePhysicsBodyRectangle((Vector2){ screenWidth/2, screenHeight/2 }, 50, 50, 1);
     body->freezeOrient = true;  // Constrain body rotation to avoid little collision torque amounts
     
     SetTargetFPS(60);
@@ -88,7 +89,7 @@ int main()
             int bodiesCount = GetPhysicsBodiesCount();
             for (int i = 0; i < bodiesCount; i++)
             {
-                PhysicsBody body = GetPhysicsBody(i);
+                PhysicsBody *body = GetPhysicsBody(i);
 
                 int vertexCount = GetPhysicsShapeVerticesCount(i);
                 for (int j = 0; j < vertexCount; j++)

@@ -15,10 +15,11 @@
 *
 ********************************************************************************************/
 
-#include "raylib.h"
-
+#define PHYSAC_STANDALONE
 #define PHYSAC_IMPLEMENTATION
 #include "physac.h"
+
+#include "raylib.h"
 
 #define SHATTER_FORCE 200.0f
 
@@ -60,7 +61,7 @@ int main()
             int count = GetPhysicsBodiesCount();
             for (int i = count - 1; i >= 0; i--)
             {
-                PhysicsBody currentBody = GetPhysicsBody(i);
+                PhysicsBody *currentBody = GetPhysicsBody(i);
                 
                 if (currentBody != NULL)
                     PhysicsShatter(currentBody, GetMousePosition(), SHATTER_FORCE);
@@ -78,7 +79,7 @@ int main()
             int bodiesCount = GetPhysicsBodiesCount();
             for (int i = 0; i < bodiesCount; i++)
             {
-                PhysicsBody currentBody = GetPhysicsBody(i);
+                PhysicsBody *currentBody = GetPhysicsBody(i);
 
                 int vertexCount = GetPhysicsShapeVerticesCount(i);
                 for (int j = 0; j < vertexCount; j++)

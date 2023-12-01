@@ -15,10 +15,11 @@
 *
 ********************************************************************************************/
 
-#include "raylib.h"
-
+#define PHYSAC_STANDALONE
 #define PHYSAC_IMPLEMENTATION
 #include "physac.h"
+
+#include "raylib.h"
 
 int main()
 {
@@ -38,28 +39,28 @@ int main()
     InitPhysics();
 
     // Create floor rectangle physics body
-    PhysicsBody floor = CreatePhysicsBodyRectangle((Vector2){ screenWidth/2, screenHeight }, screenWidth, 100, 10);
+    PhysicsBody *floor = CreatePhysicsBodyRectangle((Vector2){ screenWidth/2, screenHeight }, screenWidth, 100, 10);
     floor->enabled = false; // Disable body state to convert it to static (no dynamics, but collisions)
-    PhysicsBody wall = CreatePhysicsBodyRectangle((Vector2){ screenWidth/2, screenHeight*0.8f }, 10, 80, 10);
+    PhysicsBody *wall = CreatePhysicsBodyRectangle((Vector2){ screenWidth/2, screenHeight*0.8f }, 10, 80, 10);
     wall->enabled = false; // Disable body state to convert it to static (no dynamics, but collisions)
 
     // Create left ramp physics body
-    PhysicsBody rectLeft = CreatePhysicsBodyRectangle((Vector2){ 25, screenHeight - 5 }, 250, 250, 10);
+    PhysicsBody *rectLeft = CreatePhysicsBodyRectangle((Vector2){ 25, screenHeight - 5 }, 250, 250, 10);
     rectLeft->enabled = false; // Disable body state to convert it to static (no dynamics, but collisions)
     SetPhysicsBodyRotation(rectLeft, 30*DEG2RAD);
 
     // Create right ramp  physics body
-    PhysicsBody rectRight = CreatePhysicsBodyRectangle((Vector2){ screenWidth - 25, screenHeight - 5 }, 250, 250, 10);
+    PhysicsBody *rectRight = CreatePhysicsBodyRectangle((Vector2){ screenWidth - 25, screenHeight - 5 }, 250, 250, 10);
     rectRight->enabled = false; // Disable body state to convert it to static (no dynamics, but collisions)
     SetPhysicsBodyRotation(rectRight, 330*DEG2RAD);
 
     // Create dynamic physics bodies
-    PhysicsBody bodyA = CreatePhysicsBodyRectangle((Vector2){ 35, screenHeight*0.6f }, 40, 40, 10);
+    PhysicsBody *bodyA = CreatePhysicsBodyRectangle((Vector2){ 35, screenHeight*0.6f }, 40, 40, 10);
     bodyA->staticFriction = 0.1f;
     bodyA->dynamicFriction = 0.1f;
     SetPhysicsBodyRotation(bodyA, 30*DEG2RAD);
 
-    PhysicsBody bodyB = CreatePhysicsBodyRectangle((Vector2){ screenWidth - 35, screenHeight*0.6f }, 40, 40, 10);
+    PhysicsBody *bodyB = CreatePhysicsBodyRectangle((Vector2){ screenWidth - 35, screenHeight*0.6f }, 40, 40, 10);
     bodyB->staticFriction = 1;
     bodyB->dynamicFriction = 1;
     SetPhysicsBodyRotation(bodyB, 330*DEG2RAD);
@@ -87,7 +88,7 @@ int main()
             int bodiesCount = GetPhysicsBodiesCount();
             for (int i = 0; i < bodiesCount; i++)
             {
-                PhysicsBody body = GetPhysicsBody(i);
+                PhysicsBody *body = GetPhysicsBody(i);
 
                 if (body != NULL)
                 {

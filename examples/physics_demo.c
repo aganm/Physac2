@@ -15,10 +15,11 @@
 *
 ********************************************************************************************/
 
-#include "raylib.h"
-
+#define PHYSAC_STANDALONE
 #define PHYSAC_IMPLEMENTATION
 #include "physac.h"
+
+#include "raylib.h"
 
 int main()
 {
@@ -38,11 +39,11 @@ int main()
     InitPhysics();
 
     // Create floor rectangle physics body
-    PhysicsBody floor = CreatePhysicsBodyRectangle((Vector2){ screenWidth/2, screenHeight }, 500, 100, 10);
+    PhysicsBody *floor = CreatePhysicsBodyRectangle((Vector2){ screenWidth/2, screenHeight }, 500, 100, 10);
     floor->enabled = false; // Disable body state to convert it to static (no dynamics, but collisions)
 
     // Create obstacle circle physics body
-    PhysicsBody circle = CreatePhysicsBodyCircle((Vector2){ screenWidth/2, screenHeight/2 }, 45, 10);
+    PhysicsBody *circle = CreatePhysicsBodyCircle((Vector2){ screenWidth/2, screenHeight/2 }, 45, 10);
     circle->enabled = false; // Disable body state to convert it to static (no dynamics, but collisions)
     
     SetTargetFPS(60);
@@ -63,7 +64,7 @@ int main()
         int bodiesCount = GetPhysicsBodiesCount();
         for (int i = bodiesCount - 1; i >= 0; i--)
         {
-            PhysicsBody body = GetPhysicsBody(i);
+            PhysicsBody *body = GetPhysicsBody(i);
             
             if ((body != NULL) && (body->position.y > screenHeight*2))
                 DestroyPhysicsBody(body);
@@ -82,7 +83,7 @@ int main()
             bodiesCount = GetPhysicsBodiesCount();
             for (int i = 0; i < bodiesCount; i++)
             {
-                PhysicsBody body = GetPhysicsBody(i);
+                PhysicsBody *body = GetPhysicsBody(i);
 
                 if (body != NULL)
                 {

@@ -15,10 +15,11 @@
 *
 ********************************************************************************************/
 
-#include "raylib.h"
-
+#define PHYSAC_STANDALONE
 #define PHYSAC_IMPLEMENTATION
 #include "physac.h"
+
+#include "raylib.h"
 
 int main()
 {
@@ -38,16 +39,16 @@ int main()
     InitPhysics();
 
     // Create floor rectangle physics body
-    PhysicsBody floor = CreatePhysicsBodyRectangle((Vector2){ screenWidth/2, screenHeight }, screenWidth, 100, 10);
+    PhysicsBody *floor = CreatePhysicsBodyRectangle((Vector2){ screenWidth/2, screenHeight }, screenWidth, 100, 10);
     floor->enabled = false; // Disable body state to convert it to static (no dynamics, but collisions)
     floor->restitution = 1;
 
     // Create circles physics body
-    PhysicsBody circleA = CreatePhysicsBodyCircle((Vector2){ screenWidth*0.25f, screenHeight/2 }, 30, 10);
+    PhysicsBody *circleA = CreatePhysicsBodyCircle((Vector2){ screenWidth*0.25f, screenHeight/2 }, 30, 10);
     circleA->restitution = 0.0f;
-    PhysicsBody circleB = CreatePhysicsBodyCircle((Vector2){ screenWidth*0.5f, screenHeight/2 }, 30, 10);
+    PhysicsBody *circleB = CreatePhysicsBodyCircle((Vector2){ screenWidth*0.5f, screenHeight/2 }, 30, 10);
     circleB->restitution = 0.5f;
-    PhysicsBody circleC = CreatePhysicsBodyCircle((Vector2){ screenWidth*0.75f, screenHeight/2 }, 30, 10);
+    PhysicsBody *circleC = CreatePhysicsBodyCircle((Vector2){ screenWidth*0.75f, screenHeight/2 }, 30, 10);
     circleC->restitution = 0.9f;
     
     SetTargetFPS(60);
@@ -73,7 +74,7 @@ int main()
             int bodiesCount = GetPhysicsBodiesCount();
             for (int i = 0; i < bodiesCount; i++)
             {
-                PhysicsBody body = GetPhysicsBody(i);
+                PhysicsBody *body = GetPhysicsBody(i);
 
                 int vertexCount = GetPhysicsShapeVerticesCount(i);
                 for (int j = 0; j < vertexCount; j++)
