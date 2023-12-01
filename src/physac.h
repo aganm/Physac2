@@ -407,7 +407,7 @@ PHYSACDEF void PhysacStaticFree(void *ptr)
 #if !defined(PHYSAC_NO_THREADS)
 static pthread_t physicsThreadId;                           // Physics thread id
 #endif
-static unsigned int usedMemory = 0;                         // Total allocated dynamic memory
+static size_t usedMemory = 0;                               // Total allocated dynamic memory
 static volatile bool physicsThreadEnabled = false;          // Physics thread enabled state
 static double baseTime = 0.0;                               // Offset time for MONOTONIC clock
 static double startTime = 0.0;                              // Start time in milliseconds
@@ -1081,9 +1081,9 @@ PHYSACDEF void ClosePhysics(void)
 
     #if defined(PHYSAC_DEBUG)
         if (physicsBodiesCount > 0 || usedMemory != 0)
-            printf("[PHYSAC] physics module closed with %i still allocated bodies [MEMORY: %i bytes]\n", physicsBodiesCount, usedMemory);
+            printf("[PHYSAC] physics module closed with %i still allocated bodies [MEMORY: %zu bytes]\n", physicsBodiesCount, usedMemory);
         else if (physicsManifoldsCount > 0 || usedMemory != 0)
-            printf("[PHYSAC] physics module closed with %i still allocated manifolds [MEMORY: %i bytes]\n", physicsManifoldsCount, usedMemory);
+            printf("[PHYSAC] physics module closed with %i still allocated manifolds [MEMORY: %zu bytes]\n", physicsManifoldsCount, usedMemory);
         else
             printf("[PHYSAC] physics module closed successfully\n");
     #endif
