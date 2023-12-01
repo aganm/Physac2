@@ -15,6 +15,7 @@ Here is a non exhaustive list of changes that I want to do in Physac2:
 - [ ] Replace API return types by handles, [Handles are the better pointers](https://floooh.github.io/2018/06/17/handles-vs-pointers.html).
 - [ ] Replace all the brute force search loops by faster algorithms.
 - [x] Fix pthread_join to block indefinitely, credits in the source.
+- [x] Add Emscripten support, credits in the source.
 
 # Physac
 

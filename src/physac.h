@@ -55,6 +55,7 @@
 *       - pamarcos: fixed implementation of physics steps
 *       - noshbar: fixed some memory leaks
 *       - Jake-Moss: fixed pthread_join to block indefinitely
+*       - eldelto: added support for Emscripten
 *
 *
 *   LICENSE: zlib/libpng
@@ -271,6 +272,8 @@ PHYSACDEF void ClosePhysics(void);                                              
     #include <sys/time.h>           // Required for: timespec
 #elif defined(__APPLE__)            // macOS also defines __MACH__
     #include <mach/mach_time.h>     // Required for: mach_absolute_time()
+#elif defined(EMSCRIPTEN)           // Emscripten uses the browser's time functions
+    #include <emscripten.h>         // Required for: emscripten_get_now()
 #endif
 
 //----------------------------------------------------------------------------------
@@ -2013,6 +2016,10 @@ static void InitTimer(void)
         frequency = (timebase.denom*1e9)/timebase.numer;
     #endif
 
+    #if defined(EMSCRIPTEN)
+        frequency = 1000;
+    #endif
+
     baseTime = GetTimeCount();      // Get MONOTONIC clock time offset
     startTime = GetCurrentTime();   // Get current time
 }
@@ -2034,6 +2041,10 @@ static uint64_t GetTimeCount(void)
 
     #if defined(__APPLE__)
         value = mach_absolute_time();
+    #endif
+
+    #if defined(EMSCRIPTEN)
+        value = emscripten_get_now();
     #endif
 
     return value;
