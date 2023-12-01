@@ -112,8 +112,8 @@
 #define     PHYSAC_PI                       3.14159265358979323846
 #define     PHYSAC_DEG2RAD                  (PHYSAC_PI/180.0f)
 
-#define     PHYSAC_MALLOC(size)             malloc(size)
-#define     PHYSAC_FREE(ptr)                free(ptr)
+#define     PHYSAC_MALLOC(size)             PhysacStaticMalloc(size) // malloc(size)
+#define     PHYSAC_FREE(ptr)                PhysacStaticFree(ptr)    // free(ptr)
 
 //----------------------------------------------------------------------------------
 // Types and Structures Definition
@@ -244,6 +244,7 @@ PHYSACDEF void ClosePhysics(void);                                              
     #include <stdio.h>              // Required for: printf()
 #endif
 
+#include <stddef.h>                 // Required for: size_t
 #include <stdlib.h>                 // Required for: malloc(), free(), srand(), rand()
 #include <math.h>                   // Required for: cosf(), sinf(), fabs(), sqrtf()
 #include <stdint.h>                 // Required for: uint64_t
@@ -285,6 +286,116 @@ PHYSACDEF void ClosePhysics(void);                                              
 #define     PHYSAC_EPSILON              0.000001f
 #define     PHYSAC_K                    1.0f/3.0f
 #define     PHYSAC_VECTOR_ZERO          (Vector2){ 0.0f, 0.0f }
+
+//----------------------------------------------------------------------------------
+// Static allocator
+//----------------------------------------------------------------------------------
+
+static struct PhysicsBodyStore {
+    PhysicsBody array[PHYSAC_MAX_BODIES];
+    unsigned int arrayCount;
+    unsigned int freelist[PHYSAC_MAX_BODIES];
+    unsigned int freelistCount;
+} bodyStore;
+
+static struct PhysicsManifoldStore {
+    PhysicsManifold array[PHYSAC_MAX_MANIFOLDS];
+    unsigned int arrayCount;
+    unsigned int freelist[PHYSAC_MAX_MANIFOLDS];
+    unsigned int freelistCount;
+} manifoldStore;
+
+static struct PhysicsVertexStore {
+    Vector2 array[PHYSAC_MAX_VERTICES];
+    unsigned int arrayCount;
+    unsigned int freelist[PHYSAC_MAX_VERTICES];
+    unsigned int freelistCount;
+} vertexStore;
+
+PHYSACDEF void *PhysacStaticMalloc(size_t size)
+{
+    void *ptr = NULL;
+
+    switch (size)
+    {
+        case sizeof(PhysicsBody):
+        {
+            if (bodyStore.freelistCount > 0)
+                ptr = (void *)&bodyStore.array[bodyStore.freelist[-- bodyStore.freelistCount]];
+            else if (bodyStore.arrayCount < PHYSAC_MAX_BODIES)
+                ptr = (void *)&bodyStore.array[bodyStore.arrayCount ++];
+        } break;
+        case sizeof(PhysicsManifold):
+        {
+            if (manifoldStore.freelistCount > 0)
+                ptr = (void *)&manifoldStore.array[manifoldStore.freelist[-- manifoldStore.freelistCount]];
+            else if (manifoldStore.arrayCount < PHYSAC_MAX_MANIFOLDS)
+                ptr = (void *)&manifoldStore.array[manifoldStore.arrayCount ++];
+        } break;
+        case sizeof(Vector2):
+        {
+            if (vertexStore.freelistCount > 0)
+                ptr = (void *)&vertexStore.array[vertexStore.freelist[-- vertexStore.freelistCount]];
+            else if (vertexStore.arrayCount < PHYSAC_MAX_VERTICES)
+                ptr = (void *)&vertexStore.array[vertexStore.arrayCount ++];
+        } break;
+        default:
+        {
+            #if defined(PHYSAC_DEBUG)
+                printf("[PHYSAC] error allocating a size not handled by static allocator\n");
+                return NULL;
+            #endif
+        } break;
+    }
+
+    #if defined(PHYSAC_DEBUG)
+        if (ptr == NULL)
+            printf("[PHYSAC] error static allocator is out of space for type size %i\n", (int)size);
+    #endif
+
+    return ptr;
+}
+
+PHYSACDEF void PhysacStaticFree(void *ptr)
+{
+    if (ptr == NULL)
+        return;
+
+    static const struct {
+        const void *bodyBegin, *bodyEnd;
+        const void *manifoldBegin, *manifoldEnd;
+        const void *vertexBegin, *vertexEnd;
+    } arrayRanges = {
+	.bodyBegin = bodyStore.array, .bodyEnd = bodyStore.array + sizeof(bodyStore.array),
+	.manifoldBegin = manifoldStore.array, .manifoldEnd = manifoldStore.array + sizeof(manifoldStore.array),
+	.vertexBegin = vertexStore.array, .vertexEnd = vertexStore.array + sizeof(vertexStore.array),
+    };
+
+    if ((ptr >= arrayRanges.bodyBegin && ptr < arrayRanges.bodyEnd) &&
+        (bodyStore.freelistCount < PHYSAC_MAX_BODIES))
+    {
+        unsigned int index = (ptr - arrayRanges.bodyBegin) / sizeof(PhysicsBody);
+        bodyStore.freelist[bodyStore.freelistCount ++] = index;
+    }
+    else if ((ptr >= arrayRanges.manifoldBegin && ptr < arrayRanges.manifoldEnd) &&
+             (manifoldStore.freelistCount < PHYSAC_MAX_MANIFOLDS))
+    {
+        unsigned int index = (ptr - arrayRanges.manifoldBegin) / sizeof(PhysicsManifold);
+        manifoldStore.freelist[manifoldStore.freelistCount ++] = index;
+    }
+    else if ((ptr >= arrayRanges.vertexBegin && ptr < arrayRanges.vertexEnd) &&
+             (vertexStore.freelistCount < PHYSAC_MAX_VERTICES))
+    {
+        unsigned int index = (ptr - arrayRanges.vertexBegin) / sizeof(Vector2);
+        vertexStore.freelist[vertexStore.freelistCount ++] = index;
+    }
+    else
+    {
+        #if defined(PHYSAC_DEBUG)
+            printf("[PHYSAC] error freeing a pointer not allocated by static allocator\n");
+        #endif
+    }
+}
 
 //----------------------------------------------------------------------------------
 // Global Variables Definition
