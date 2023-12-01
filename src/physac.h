@@ -297,22 +297,22 @@ PHYSACDEF void ClosePhysics(void);                                              
 
 static struct PhysicsBodyStore {
     PhysicsBody array[PHYSAC_MAX_BODIES];
-    int arrayCount;
     int freelist[PHYSAC_MAX_BODIES];
+    int arrayCount;
     int freelistCount;
 } bodyStore;
 
 static struct PhysicsManifoldStore {
     PhysicsManifold array[PHYSAC_MAX_MANIFOLDS];
-    int arrayCount;
     int freelist[PHYSAC_MAX_MANIFOLDS];
+    int arrayCount;
     int freelistCount;
 } manifoldStore;
 
 static struct PhysicsVertexStore {
     Vector2 array[PHYSAC_MAX_VERTICES];
-    int arrayCount;
     int freelist[PHYSAC_MAX_VERTICES];
+    int arrayCount;
     int freelistCount;
 } vertexStore;
 
