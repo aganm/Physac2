@@ -292,7 +292,7 @@ PHYSACDEF void ClosePhysics(void);                                              
 #define     PHYSAC_VECTOR_ZERO          (Vector2){ 0.0f, 0.0f }
 
 //----------------------------------------------------------------------------------
-// Static allocator
+// Custom Allocators
 //----------------------------------------------------------------------------------
 
 static struct PhysicsBodyHeap {
