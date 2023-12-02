@@ -21,6 +21,7 @@ Here is a non exhaustive list of changes that I want to do in Physac2:
 - [x] Replace manifold cleanup O(n) loop by O(1) algorithm.
 - [x] Replace available index O(n) loops by O(1) algorithm.
 - [ ] Replace body deletion O(n) reordering loops by O(1) algorithm.
+- [ ] Remove NULLs and NULL checks in every single loop, there is no NULLs left.
 - [x] Fix pthread_join to block indefinitely, credits in the source.
 - [x] Add Emscripten support, credits in the source.
 
