@@ -824,10 +824,10 @@ PHYSACDEF void PhysicsShatter(PhysicsBody *body, Vector2 position, float force)
             {
                 int count = vertexData.vertexCount;
                 Vector2 bodyPos = body->position;
-		// NOTE: Much simpler to use a local array with max size, this could be an issue if
-		// the size grows too big, but now it's small enough that it's fine.
+                // NOTE: Much simpler to use a local array with max size, this could be an issue if
+                // the size grows too big, but now it's small enough that it's fine.
                 // Vector2 *vertices = (Vector2 *)PHYSAC_PUSH(sizeof(Vector2) * count);
-		Vector2 vertices[PHYSAC_MAX_VERTICES * 2];
+                Vector2 vertices[PHYSAC_MAX_VERTICES * 2];
                 Mat2 trans = body->shape.transform;
                 
                 for (int i = 0; i < count; i++)
@@ -922,7 +922,7 @@ PHYSACDEF void PhysicsShatter(PhysicsBody *body, Vector2 position, float force)
                     PhysicsAddForce(newBody, forceDirection);
                 }
 
-		// NOTE: goes with the opening push above that was replaced by local array
+                // NOTE: goes with the opening push above that was replaced by local array
                 // PHYSAC_POP(vertices);
             }
         }
