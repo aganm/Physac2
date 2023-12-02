@@ -82,8 +82,10 @@ The header contains a few customizable define values. I set the values that give
 Physac contains defines for memory management functions (malloc, free) to bring the user the opportunity to implement its own memory functions:
 
 ```c
-#define     PHYSAC_MALLOC(size)             malloc(size)
-#define     PHYSAC_FREE(ptr)                free(ptr)
+#define     PHYSAC_MALLOC(size)             PhysacMalloc(size)
+#define     PHYSAC_FREE(ptr)                PhysacFree(ptr)
+#define     PHYSAC_PUSH(size)               PhysacPush(size)
+#define     PHYSAC_POP(ptr)                 PhysacPop(ptr)
 ```
 
 The Physac API functions availables for the user are the following:
