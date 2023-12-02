@@ -789,7 +789,7 @@ PHYSACDEF void PhysicsShatter(PhysicsBody *body, Vector2 position, float force)
             {
                 int count = vertexData.vertexCount;
                 Vector2 bodyPos = body->position;
-                Vector2 *vertices = (Vector2*)PHYSAC_MALLOC(sizeof(Vector2) * count);
+                Vector2 *vertices = (Vector2 *)PHYSAC_MALLOC(sizeof(Vector2) * count);
                 Mat2 trans = body->shape.transform;
                 
                 for (int i = 0; i < count; i++)
