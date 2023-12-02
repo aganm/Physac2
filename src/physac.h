@@ -112,8 +112,11 @@
 #define     PHYSAC_PI                       3.14159265358979323846
 #define     PHYSAC_DEG2RAD                  (PHYSAC_PI/180.0f)
 
+#define     PHYSAC_MAX_STACK                (sizeof(Vector2)*PHYSAC_MAX_VERTICES*2)
 #define     PHYSAC_MALLOC(size)             PhysacMalloc(size) // malloc(size)
 #define     PHYSAC_FREE(ptr)                PhysacFree(ptr)    // free(ptr)
+#define     PHYSAC_PUSH(size)               PhysacPush(size)   // malloc(size)
+#define     PHYSAC_POP(ptr)                 PhysacPop(ptr)     // free(ptr)
 
 //----------------------------------------------------------------------------------
 // Types and Structures Definition
@@ -251,7 +254,7 @@ PHYSACDEF void ClosePhysics(void);                                              
 #include <stddef.h>                 // Required for: size_t
 #include <stdlib.h>                 // Required for: malloc(), free(), srand(), rand()
 #include <math.h>                   // Required for: cosf(), sinf(), fabs(), sqrtf()
-#include <stdint.h>                 // Required for: uint64_t
+#include <stdint.h>                 // Required for: uint64_t, uintptr_t
 
 #if !defined(PHYSAC_STANDALONE)
     #include "raymath.h"            // Required for: Vector2Add(), Vector2Subtract()
@@ -309,6 +312,7 @@ static struct PhysicsManifoldHeap {
     int freelistCount;
 } manifoldHeap;
 
+/* TODO: dead code, remove? */
 static struct PhysicsVertexHeap {
     Vector2 blocks[PHYSAC_MAX_VERTICES];
     int freelist[PHYSAC_MAX_VERTICES];
@@ -402,6 +406,37 @@ PHYSACDEF void PhysacFree(void *ptr)
             printf("[PHYSAC] error freeing a pointer not allocated by heap allocator\n");
         #endif
     }
+}
+
+static char stackBuffer[PHYSAC_MAX_STACK];
+static uintptr_t stackOffset  = 0;
+static const void *stackBegin = (void *)stackBuffer;
+static const void *stackEnd   = (void *)stackBuffer + sizeof(stackBuffer);
+
+PHYSACDEF void *PhysacPush(size_t size)
+{
+    void *ptr = NULL;
+    if (stackOffset + (uintptr_t)size <= (uintptr_t)stackEnd) {
+        ptr = (void *)&stackBuffer[stackOffset];
+        stackOffset += size;
+    }
+    #if defined(PHYSAC_DEBUG)
+        if (ptr == NULL)
+            printf("[PHYSAC] error stack allocator is full\n");
+    #endif
+    return ptr;
+}
+
+PHYSACDEF void PhysacPop(void *ptr)
+{
+    if (ptr >= stackBegin && ptr < stackEnd) {
+        uintptr_t diff = (uintptr_t)((void *)ptr - (void *)stackBegin);
+	stackOffset -= diff;
+        return;
+    }
+    #if defined(PHYSAC_DEBUG)
+        printf("[PHYSAC] error freeing a pointer not allocated by stack allocator\n");
+    #endif
 }
 
 //----------------------------------------------------------------------------------
@@ -789,7 +824,7 @@ PHYSACDEF void PhysicsShatter(PhysicsBody *body, Vector2 position, float force)
             {
                 int count = vertexData.vertexCount;
                 Vector2 bodyPos = body->position;
-                Vector2 *vertices = (Vector2 *)PHYSAC_MALLOC(sizeof(Vector2) * count);
+                Vector2 *vertices = (Vector2 *)PHYSAC_PUSH(sizeof(Vector2) * count);
                 Mat2 trans = body->shape.transform;
                 
                 for (int i = 0; i < count; i++)
@@ -884,7 +919,7 @@ PHYSACDEF void PhysicsShatter(PhysicsBody *body, Vector2 position, float force)
                     PhysicsAddForce(newBody, forceDirection);
                 }
 
-                PHYSAC_FREE(vertices);
+                PHYSAC_POP(vertices);
             }
         }
     }
