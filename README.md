@@ -18,9 +18,9 @@ Here is a non exhaustive list of changes that I want to do in Physac2:
 - [x] Replace random heap allocations by custom allocators, this is an obvious performance hazard.
 - [ ] Remove coupling with pthread so that any threading library can be used.
 - [ ] Replace internal pointers by handles, [Handles are the better pointers](https://floooh.github.io/2018/06/17/handles-vs-pointers.html).
-- [x] Replace manifold cleanup O(n) loop by smarter O(1) algorithm.
-- [x] Replace available index O(n) loops by smarter O(1) algorithm.
-- [ ] Replace body deletion O(n) reordering loops by smarter O(1) algorithm.
+- [x] Replace manifold cleanup O(n) loop by O(1) algorithm.
+- [x] Replace available index O(n) loops by O(1) algorithm.
+- [ ] Replace body deletion O(n) reordering loops by O(1) algorithm.
 - [x] Fix pthread_join to block indefinitely, credits in the source.
 - [x] Add Emscripten support, credits in the source.
 
