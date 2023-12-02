@@ -464,7 +464,7 @@ static int physicsManifoldsCount = 0;                       // Physics world cur
 //----------------------------------------------------------------------------------
 // Module Internal Functions Declaration
 //----------------------------------------------------------------------------------
-static int FindAvailableBodyIndex();                                                                        // Finds a valid index for a new physics body initialization
+static int FindBodyIndex(PhysicsBody *body);                                                                // Calculate the index for a new physics body initialization
 static PolygonData CreateRandomPolygon(float radius, int sides);                                            // Creates a random polygon shape with max vertex distance from polygon pivot
 static PolygonData CreateRectanglePolygon(Vector2 pos, Vector2 size);                                       // Creates a rectangle polygon shape based on a min and max positions
 static void *PhysicsLoop(void *arg);                                                                        // Physics loop thread function
@@ -553,7 +553,7 @@ PHYSACDEF PhysicsBody *CreatePhysicsBodyCircle(Vector2 pos, float radius, float 
     PhysicsBody *newBody = (PhysicsBody *)PHYSAC_MALLOC(sizeof(PhysicsBody));
     usedMemory += sizeof(PhysicsBody);
 
-    PhysicsRUID newId = { FindAvailableBodyIndex() };
+    PhysicsRUID newId = { FindBodyIndex(newBody) };
     if (newId.id != -1)
     {
         // Initialize new body with generic values
@@ -604,7 +604,7 @@ PHYSACDEF PhysicsBody *CreatePhysicsBodyRectangle(Vector2 pos, float width, floa
     PhysicsBody *newBody = (PhysicsBody *)PHYSAC_MALLOC(sizeof(PhysicsBody));
     usedMemory += sizeof(PhysicsBody);
 
-    PhysicsRUID newId = { FindAvailableBodyIndex() };
+    PhysicsRUID newId = { FindBodyIndex(newBody) };
     if (newId.id != -1)
     {
         // Initialize new body with generic values
@@ -692,7 +692,7 @@ PHYSACDEF PhysicsBody *CreatePhysicsBodyPolygon(Vector2 pos, float radius, int s
     PhysicsBody *newBody = (PhysicsBody *)PHYSAC_MALLOC(sizeof(PhysicsBody));
     usedMemory += sizeof(PhysicsBody);
 
-    PhysicsRUID newId = { FindAvailableBodyIndex() };
+    PhysicsRUID newId = { FindBodyIndex(newBody) };
     if (newId.id != -1)
     {
         // Initialize new body with generic values
@@ -1135,31 +1135,12 @@ PHYSACDEF void ClosePhysics(void)
 // Module Internal Functions Definition
 //----------------------------------------------------------------------------------
 // Finds a valid index for a new physics body initialization
-static int FindAvailableBodyIndex()
+static int FindBodyIndex(PhysicsBody *body)
 {
     int index = -1;
-    for (int i = 0; i < PHYSAC_MAX_BODIES; i++)
-    {
-        int currentId = i;
-
-        // Check if current id already exist in other physics body
-        for (int k = 0; k < physicsBodiesCount; k++)
-        {
-            if (bodies[k]->id.id == currentId)
-            {
-                currentId++;
-                break;
-            }
-        }
-
-        // If it is not used, use it as new physics body id
-        if (currentId == i)
-        {
-            index = i;
-            break;
-        }
+    if (body != NULL) {
+	    index = (((void *)body - (void *)bodyHeap.blocks) /  sizeof(PhysicsBody));
     }
-
     return index;
 }
 
