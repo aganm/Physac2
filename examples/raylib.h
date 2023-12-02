@@ -25,6 +25,10 @@ static bool is_button_right_pressed;
 #define RAD2DEG (180.0f/PI)
 #endif
 
+#define BLACK (struct Color){ 0, 0, 0, 0 }
+#define WHITE (struct Color){ 255, 255, 255, 255 }
+#define GREEN (struct Color){ 0, 255, 0, 255 }
+
 enum Flags
 {
 	FLAG_MSAA_4X_HINT,
@@ -44,17 +48,14 @@ enum Button
 	MOUSE_RIGHT_BUTTON,
 };
 
-enum Color
+struct Color
 {
-	BLACK,
-	WHITE,
-	GREEN,
+	Uint8 r, g, b, a;
 };
 
 static void SetConfigFlags(enum Flags flags)
 {
-	if (flags == FLAG_MSAA_4X_HINT)
-	{
+	if (flags == FLAG_MSAA_4X_HINT) {
 		SDL_GL_SetAttribute(SDL_GL_MULTISAMPLESAMPLES, 4);
 	}
 }
@@ -101,18 +102,10 @@ static bool WindowShouldClose()
 		{
 			switch (event.key.keysym.scancode)
 			{
-			case SDL_SCANCODE_LEFT:
-				is_left_pressed = true;
-				break;
-			case SDL_SCANCODE_RIGHT:
-				is_right_pressed = true;
-				break;
-			case SDL_SCANCODE_UP:
-				is_up_pressed = true;
-				break;
-			case SDL_SCANCODE_DOWN:
-				is_down_pressed = true;
-				break;
+			case SDL_SCANCODE_LEFT: is_left_pressed = true; break;
+			case SDL_SCANCODE_RIGHT: is_right_pressed = true; break;
+			case SDL_SCANCODE_UP: is_up_pressed = true; break;
+			case SDL_SCANCODE_DOWN: is_down_pressed = true; break;
 			}
 			break;
 		}
@@ -120,18 +113,10 @@ static bool WindowShouldClose()
 		{
 			switch (event.key.keysym.scancode)
 			{
-			case SDL_SCANCODE_LEFT:
-				is_left_pressed = false;
-				break;
-			case SDL_SCANCODE_RIGHT:
-				is_right_pressed = false;
-				break;
-			case SDL_SCANCODE_UP:
-				is_up_pressed = false;
-				break;
-			case SDL_SCANCODE_DOWN:
-				is_down_pressed = false;
-				break;
+			case SDL_SCANCODE_LEFT: is_left_pressed = false; break;
+			case SDL_SCANCODE_RIGHT: is_right_pressed = false; break;
+			case SDL_SCANCODE_UP: is_up_pressed = false; break;
+			case SDL_SCANCODE_DOWN: is_down_pressed = false; break;
 			}
 			break;
 		}
@@ -139,12 +124,8 @@ static bool WindowShouldClose()
 		{
 			switch (event.button.button)
 			{
-			case SDL_BUTTON_LEFT:
-				is_button_left_pressed = true;
-				break;
-			case SDL_BUTTON_RIGHT:
-				is_button_right_pressed = true;
-				break;
+			case SDL_BUTTON_LEFT: is_button_left_pressed = true; break;
+			case SDL_BUTTON_RIGHT: is_button_right_pressed = true; break;
 			}
 			break;
 		}
@@ -158,14 +139,10 @@ static bool IsKeyDown(enum Key key)
 {
 	switch (key)
 	{
-	case KEY_LEFT:
-		return is_left_pressed;
-	case KEY_RIGHT:
-		return is_right_pressed;
-	case KEY_UP:
-		return is_up_pressed;
-	case KEY_DOWN:
-		return is_down_pressed;
+	case KEY_LEFT: return is_left_pressed;
+	case KEY_RIGHT: return is_right_pressed;
+	case KEY_UP: return is_up_pressed;
+	case KEY_DOWN: return is_down_pressed;
 	}
 }
 
@@ -173,10 +150,8 @@ static bool IsMouseButtonPressed(enum Button button)
 {
 	switch (button)
 	{
-	case MOUSE_LEFT_BUTTON:
-		return is_button_left_pressed;
-	case MOUSE_RIGHT_BUTTON:
-		return is_button_right_pressed;
+	case MOUSE_LEFT_BUTTON: return is_button_left_pressed;
+	case MOUSE_RIGHT_BUTTON: return is_button_right_pressed;
 	}
 }
 
@@ -184,10 +159,7 @@ static Vector2 GetMousePosition(void)
 {
 	int x, y;
 	SDL_GetMouseState(&x, &y);
-	return (Vector2)
-	{
-		x, y
-	};
+	return (Vector2){ x, y };
 }
 
 static int GetRandomValue(int min, int max)
@@ -204,25 +176,9 @@ static void EndDrawing(void)
 	SDL_RenderPresent(renderer);
 }
 
-static void SetRenderColor(enum Color color)
+static void ClearBackground(struct Color color)
 {
-	switch (color)
-	{
-	case BLACK:
-		SDL_SetRenderDrawColor(renderer, 0, 0, 0, 0);
-		break;
-	case WHITE:
-		SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
-		break;
-	case GREEN:
-		SDL_SetRenderDrawColor(renderer, 0, 255, 0, 255);
-		break;
-	}
-}
-
-static void ClearBackground(enum Color color)
-{
-	SetRenderColor(color);
+	SDL_SetRenderDrawColor(renderer, color.r, color.g, color.b, color.a);
 	SDL_RenderClear(renderer);
 }
 
@@ -232,23 +188,21 @@ static void DrawFPS(int x, int y)
 	(void)y;
 }
 
-static void DrawLineV(Vector2 vertexA, Vector2 vertexB, enum Color color)
+static void DrawLineV(Vector2 vertexA, Vector2 vertexB, struct Color color)
 {
-	SetRenderColor(color);
+	SDL_SetRenderDrawColor(renderer, color.r, color.g, color.b, color.a);
 	SDL_RenderDrawLine(renderer, vertexA.x, vertexA.y, vertexB.x, vertexB.y);
 }
 
-static void DrawRectangle(int x, int y, int w, int h, enum Color color)
+static void DrawRectangle(int x, int y, int w, int h, struct Color color)
 {
-	SetRenderColor(color);
-	SDL_Rect rect = { x, y, w, h };
-	SDL_RenderDrawRect(renderer, &rect);
+	SDL_SetRenderDrawColor(renderer, color.r, color.g, color.b, color.a);
+	SDL_RenderDrawRect(renderer, &(SDL_Rect){ x, y, w, h });
 }
 
-static void DrawText(const char *text, int x, int y, int fontSize, enum Color color)
+static void DrawText(const char *text, int x, int y, int fontSize, struct Color color)
 {
 	(void)fontSize;
-	SetRenderColor(color);
-	SDL_Rect rect = { x, y, fontSize, fontSize };
-	SDL_RenderDrawRect(renderer, &rect);
+	SDL_SetRenderDrawColor(renderer, color.r, color.g, color.b, color.a);
+	SDL_RenderDrawRect(renderer, &(SDL_Rect){ x, y, fontSize, fontSize });
 }
