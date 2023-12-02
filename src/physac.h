@@ -1139,7 +1139,7 @@ static int FindBodyIndex(PhysicsBody *body)
 {
     int index = -1;
     if (body != NULL) {
-	    index = (((void *)body - (void *)bodyHeap.blocks) /  sizeof(PhysicsBody));
+        index = (((void *)body - (void *)bodyHeap.blocks) /  sizeof(PhysicsBody));
     }
     return index;
 }
@@ -1370,7 +1370,7 @@ static int FindManifoldIndex(PhysicsManifold *manifold)
 {
     int index = -1;
     if (manifold != NULL) {
-	    index = (((void *)manifold - (void *)manifoldHeap.blocks) /  sizeof(PhysicsManifold));
+        index = (((void *)manifold - (void *)manifoldHeap.blocks) /  sizeof(PhysicsManifold));
     }
     return index;
 }
