@@ -81,6 +81,7 @@ The header contains a few customizable define values. I set the values that give
 
 Physac contains defines for memory management functions (malloc, free) to bring the user the opportunity to implement its own memory functions:
 
+<!--- TODO/NOTE: these should not be exposed so easily now that my FindIndex functions rely on internal allocator.. -->
 ```c
 #define     PHYSAC_MALLOC(size)             PhysacMalloc(size)
 #define     PHYSAC_FREE(ptr)                PhysacFree(ptr)
