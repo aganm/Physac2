@@ -369,7 +369,7 @@ PHYSACDEF void PhysacFree(void *ptr)
         const void *bodyBegin, *bodyEnd;
         const void *manifoldBegin, *manifoldEnd;
         const void *vertexBegin, *vertexEnd;
-    } blocksRanges = {
+    } heapRanges = {
 	.bodyBegin     = (void *)bodyHeap.blocks,
 	.bodyEnd       = (void *)bodyHeap.blocks + sizeof(bodyHeap.blocks),
 	.manifoldBegin = (void *)manifoldHeap.blocks,
@@ -378,22 +378,22 @@ PHYSACDEF void PhysacFree(void *ptr)
 	.vertexEnd     = (void *)vertexHeap.blocks + sizeof(vertexHeap.blocks),
     };
 
-    if ((ptr >= blocksRanges.bodyBegin && ptr < blocksRanges.bodyEnd) &&
+    if ((ptr >= heapRanges.bodyBegin && ptr < heapRanges.bodyEnd) &&
         (bodyHeap.freelistCount < PHYSAC_MAX_BODIES))
     {
-        int index = (ptr - blocksRanges.bodyBegin) / sizeof(PhysicsBody);
+        int index = (ptr - heapRanges.bodyBegin) / sizeof(PhysicsBody);
         bodyHeap.freelist[bodyHeap.freelistCount ++] = index;
     }
-    else if ((ptr >= blocksRanges.manifoldBegin && ptr < blocksRanges.manifoldEnd) &&
+    else if ((ptr >= heapRanges.manifoldBegin && ptr < heapRanges.manifoldEnd) &&
              (manifoldHeap.freelistCount < PHYSAC_MAX_MANIFOLDS))
     {
-        int index = (ptr - blocksRanges.manifoldBegin) / sizeof(PhysicsManifold);
+        int index = (ptr - heapRanges.manifoldBegin) / sizeof(PhysicsManifold);
         manifoldHeap.freelist[manifoldHeap.freelistCount ++] = index;
     }
-    else if ((ptr >= blocksRanges.vertexBegin && ptr < blocksRanges.vertexEnd) &&
+    else if ((ptr >= heapRanges.vertexBegin && ptr < heapRanges.vertexEnd) &&
              (vertexHeap.freelistCount < PHYSAC_MAX_VERTICES))
     {
-        int index = (ptr - blocksRanges.vertexBegin) / sizeof(Vector2);
+        int index = (ptr - heapRanges.vertexBegin) / sizeof(Vector2);
         vertexHeap.freelist[vertexHeap.freelistCount ++] = index;
     }
     else
