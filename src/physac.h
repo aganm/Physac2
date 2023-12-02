@@ -150,7 +150,7 @@ typedef struct Mat2 {
 } Mat2;
 
 typedef struct PhysicsRUID {
-	int id;
+    int id;
 } PhysicsRUID;
 
 typedef struct PolygonData {
@@ -374,12 +374,12 @@ PHYSACDEF void PhysacFree(void *ptr)
         const void *manifoldBegin, *manifoldEnd;
         const void *vertexBegin, *vertexEnd;
     } heapRanges = {
-	.bodyBegin     = (void *)bodyHeap.blocks,
-	.bodyEnd       = (void *)bodyHeap.blocks + sizeof(bodyHeap.blocks),
-	.manifoldBegin = (void *)manifoldHeap.blocks,
-	.manifoldEnd   = (void *)manifoldHeap.blocks + sizeof(manifoldHeap.blocks),
-	.vertexBegin   = (void *)vertexHeap.blocks,
-	.vertexEnd     = (void *)vertexHeap.blocks + sizeof(vertexHeap.blocks),
+        .bodyBegin     = (void *)bodyHeap.blocks,
+        .bodyEnd       = (void *)bodyHeap.blocks + sizeof(bodyHeap.blocks),
+        .manifoldBegin = (void *)manifoldHeap.blocks,
+        .manifoldEnd   = (void *)manifoldHeap.blocks + sizeof(manifoldHeap.blocks),
+        .vertexBegin   = (void *)vertexHeap.blocks,
+        .vertexEnd     = (void *)vertexHeap.blocks + sizeof(vertexHeap.blocks),
     };
 
     if ((ptr >= heapRanges.bodyBegin && ptr < heapRanges.bodyEnd) &&
@@ -431,7 +431,7 @@ PHYSACDEF void PhysacPop(void *ptr)
 {
     if (ptr >= stackBegin && ptr < stackEnd) {
         uintptr_t diff = (uintptr_t)((void *)ptr - (void *)stackBegin);
-	stackOffset -= diff;
+        stackOffset -= diff;
         return;
     }
     #if defined(PHYSAC_DEBUG)
@@ -521,7 +521,7 @@ PHYSACDEF void InitPhysics(void)
         // Create physics thread using POSIXS thread libraries
         pthread_create(&physicsThreadId, NULL, &PhysicsLoop, NULL);
     #else
-	(void)PhysicsLoop; // unused warning
+        (void)PhysicsLoop; // unused warning
     #endif
 
     // Initialize high resolution timer
@@ -824,7 +824,10 @@ PHYSACDEF void PhysicsShatter(PhysicsBody *body, Vector2 position, float force)
             {
                 int count = vertexData.vertexCount;
                 Vector2 bodyPos = body->position;
-                Vector2 *vertices = (Vector2 *)PHYSAC_PUSH(sizeof(Vector2) * count);
+		// NOTE: Much simpler to use a local array with max size, this could be an issue if
+		// the size grows too big, but now it's small enough that it's fine.
+                // Vector2 *vertices = (Vector2 *)PHYSAC_PUSH(sizeof(Vector2) * count);
+		Vector2 vertices[PHYSAC_MAX_VERTICES * 2];
                 Mat2 trans = body->shape.transform;
                 
                 for (int i = 0; i < count; i++)
@@ -919,7 +922,8 @@ PHYSACDEF void PhysicsShatter(PhysicsBody *body, Vector2 position, float force)
                     PhysicsAddForce(newBody, forceDirection);
                 }
 
-                PHYSAC_POP(vertices);
+		// NOTE: goes with the opening push above that was replaced by local array
+                // PHYSAC_POP(vertices);
             }
         }
     }
