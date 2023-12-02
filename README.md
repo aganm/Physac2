@@ -5,14 +5,15 @@
 WIP: This is a work in progress.
 
 Physac2 is a fork of the original [Physac](https://github.com/victorfisac/Physac) library by Victor Fisac.
-While I liked the original library, there was a variety of things that I wanted to change,
+While I loved the simplicity of the original library, it had a variety of problems that I wanted to fix,
 including API breaking changes which would break backwards compatibility with old code.
-Due to the breaking nature of the changes I want to make to Physac, I decided to make my own fork and call it Physac2.
+Due to the breaking nature of the changes I want to make to Physac, and the lack of activity on the original repository,
+I decided to make my own fork and call it Physac2.
 
 Here is a non exhaustive list of changes that I want to do in Physac2:
 - [x] Fix many warnings, 50+ in gcc.
 - [x] Remove hidden pointers in API typedefs, it is obfuscation making the code harder to read.
-- [x] Remove random heap allocations, this is causing a lot of unnecessary fragmentation.
+- [x] Replace random heap allocations by custom allocators, this is an obvious performance hazard.
 - [ ] Remove coupling with pthread so that any threading library can be used.
 - [ ] Replace internal pointers by handles, [Handles are the better pointers](https://floooh.github.io/2018/06/17/handles-vs-pointers.html).
 - [ ] Replace all the brute force search loops by faster algorithms.
