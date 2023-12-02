@@ -112,8 +112,8 @@
 #define     PHYSAC_PI                       3.14159265358979323846
 #define     PHYSAC_DEG2RAD                  (PHYSAC_PI/180.0f)
 
-#define     PHYSAC_MALLOC(size)             PhysacStaticMalloc(size) // malloc(size)
-#define     PHYSAC_FREE(ptr)                PhysacStaticFree(ptr)    // free(ptr)
+#define     PHYSAC_MALLOC(size)             PhysacMalloc(size) // malloc(size)
+#define     PHYSAC_FREE(ptr)                PhysacFree(ptr)    // free(ptr)
 
 //----------------------------------------------------------------------------------
 // Types and Structures Definition
@@ -295,28 +295,28 @@ PHYSACDEF void ClosePhysics(void);                                              
 // Static allocator
 //----------------------------------------------------------------------------------
 
-static struct PhysicsBodyStore {
-    PhysicsBody array[PHYSAC_MAX_BODIES];
+static struct PhysicsBodyHeap {
+    PhysicsBody blocks[PHYSAC_MAX_BODIES];
     int freelist[PHYSAC_MAX_BODIES];
-    int arrayCount;
+    int blocksCount;
     int freelistCount;
-} bodyStore;
+} bodyHeap;
 
-static struct PhysicsManifoldStore {
-    PhysicsManifold array[PHYSAC_MAX_MANIFOLDS];
+static struct PhysicsManifoldHeap {
+    PhysicsManifold blocks[PHYSAC_MAX_MANIFOLDS];
     int freelist[PHYSAC_MAX_MANIFOLDS];
-    int arrayCount;
+    int blocksCount;
     int freelistCount;
-} manifoldStore;
+} manifoldHeap;
 
-static struct PhysicsVertexStore {
-    Vector2 array[PHYSAC_MAX_VERTICES];
+static struct PhysicsVertexHeap {
+    Vector2 blocks[PHYSAC_MAX_VERTICES];
     int freelist[PHYSAC_MAX_VERTICES];
-    int arrayCount;
+    int blocksCount;
     int freelistCount;
-} vertexStore;
+} vertexHeap;
 
-PHYSACDEF void *PhysacStaticMalloc(size_t size)
+PHYSACDEF void *PhysacMalloc(size_t size)
 {
     void *ptr = NULL;
 
@@ -324,29 +324,29 @@ PHYSACDEF void *PhysacStaticMalloc(size_t size)
     {
         case sizeof(PhysicsBody):
         {
-            if (bodyStore.freelistCount > 0)
-                ptr = (void *)&bodyStore.array[bodyStore.freelist[-- bodyStore.freelistCount]];
-            else if (bodyStore.arrayCount < PHYSAC_MAX_BODIES)
-                ptr = (void *)&bodyStore.array[bodyStore.arrayCount ++];
+            if (bodyHeap.freelistCount > 0)
+                ptr = (void *)&bodyHeap.blocks[bodyHeap.freelist[-- bodyHeap.freelistCount]];
+            else if (bodyHeap.blocksCount < PHYSAC_MAX_BODIES)
+                ptr = (void *)&bodyHeap.blocks[bodyHeap.blocksCount ++];
         } break;
         case sizeof(PhysicsManifold):
         {
-            if (manifoldStore.freelistCount > 0)
-                ptr = (void *)&manifoldStore.array[manifoldStore.freelist[-- manifoldStore.freelistCount]];
-            else if (manifoldStore.arrayCount < PHYSAC_MAX_MANIFOLDS)
-                ptr = (void *)&manifoldStore.array[manifoldStore.arrayCount ++];
+            if (manifoldHeap.freelistCount > 0)
+                ptr = (void *)&manifoldHeap.blocks[manifoldHeap.freelist[-- manifoldHeap.freelistCount]];
+            else if (manifoldHeap.blocksCount < PHYSAC_MAX_MANIFOLDS)
+                ptr = (void *)&manifoldHeap.blocks[manifoldHeap.blocksCount ++];
         } break;
         case sizeof(Vector2):
         {
-            if (vertexStore.freelistCount > 0)
-                ptr = (void *)&vertexStore.array[vertexStore.freelist[-- vertexStore.freelistCount]];
-            else if (vertexStore.arrayCount < PHYSAC_MAX_VERTICES)
-                ptr = (void *)&vertexStore.array[vertexStore.arrayCount ++];
+            if (vertexHeap.freelistCount > 0)
+                ptr = (void *)&vertexHeap.blocks[vertexHeap.freelist[-- vertexHeap.freelistCount]];
+            else if (vertexHeap.blocksCount < PHYSAC_MAX_VERTICES)
+                ptr = (void *)&vertexHeap.blocks[vertexHeap.blocksCount ++];
         } break;
         default:
         {
             #if defined(PHYSAC_DEBUG)
-                printf("[PHYSAC] error allocating a size not handled by static allocator\n");
+                printf("[PHYSAC] error allocating a size not handled by heap allocator\n");
                 return NULL;
             #endif
         } break;
@@ -354,13 +354,13 @@ PHYSACDEF void *PhysacStaticMalloc(size_t size)
 
     #if defined(PHYSAC_DEBUG)
         if (ptr == NULL)
-            printf("[PHYSAC] error static allocator is out of space for type size %i\n", (int)size);
+            printf("[PHYSAC] error heap allocator is out of space for type size %i\n", (int)size);
     #endif
 
     return ptr;
 }
 
-PHYSACDEF void PhysacStaticFree(void *ptr)
+PHYSACDEF void PhysacFree(void *ptr)
 {
     if (ptr == NULL)
         return;
@@ -369,32 +369,32 @@ PHYSACDEF void PhysacStaticFree(void *ptr)
         const void *bodyBegin, *bodyEnd;
         const void *manifoldBegin, *manifoldEnd;
         const void *vertexBegin, *vertexEnd;
-    } arrayRanges = {
-	.bodyBegin = (void *)bodyStore.array,
-	.bodyEnd = (void *)bodyStore.array + sizeof(bodyStore.array),
-	.manifoldBegin = (void *)manifoldStore.array,
-	.manifoldEnd = (void *)manifoldStore.array + sizeof(manifoldStore.array),
-	.vertexBegin = (void *)vertexStore.array,
-	.vertexEnd = (void *)vertexStore.array + sizeof(vertexStore.array),
+    } blocksRanges = {
+	.bodyBegin     = (void *)bodyHeap.blocks,
+	.bodyEnd       = (void *)bodyHeap.blocks + sizeof(bodyHeap.blocks),
+	.manifoldBegin = (void *)manifoldHeap.blocks,
+	.manifoldEnd   = (void *)manifoldHeap.blocks + sizeof(manifoldHeap.blocks),
+	.vertexBegin   = (void *)vertexHeap.blocks,
+	.vertexEnd     = (void *)vertexHeap.blocks + sizeof(vertexHeap.blocks),
     };
 
-    if ((ptr >= arrayRanges.bodyBegin && ptr < arrayRanges.bodyEnd) &&
-        (bodyStore.freelistCount < PHYSAC_MAX_BODIES))
+    if ((ptr >= blocksRanges.bodyBegin && ptr < blocksRanges.bodyEnd) &&
+        (bodyHeap.freelistCount < PHYSAC_MAX_BODIES))
     {
-        int index = (ptr - arrayRanges.bodyBegin) / sizeof(PhysicsBody);
-        bodyStore.freelist[bodyStore.freelistCount ++] = index;
+        int index = (ptr - blocksRanges.bodyBegin) / sizeof(PhysicsBody);
+        bodyHeap.freelist[bodyHeap.freelistCount ++] = index;
     }
-    else if ((ptr >= arrayRanges.manifoldBegin && ptr < arrayRanges.manifoldEnd) &&
-             (manifoldStore.freelistCount < PHYSAC_MAX_MANIFOLDS))
+    else if ((ptr >= blocksRanges.manifoldBegin && ptr < blocksRanges.manifoldEnd) &&
+             (manifoldHeap.freelistCount < PHYSAC_MAX_MANIFOLDS))
     {
-        int index = (ptr - arrayRanges.manifoldBegin) / sizeof(PhysicsManifold);
-        manifoldStore.freelist[manifoldStore.freelistCount ++] = index;
+        int index = (ptr - blocksRanges.manifoldBegin) / sizeof(PhysicsManifold);
+        manifoldHeap.freelist[manifoldHeap.freelistCount ++] = index;
     }
-    else if ((ptr >= arrayRanges.vertexBegin && ptr < arrayRanges.vertexEnd) &&
-             (vertexStore.freelistCount < PHYSAC_MAX_VERTICES))
+    else if ((ptr >= blocksRanges.vertexBegin && ptr < blocksRanges.vertexEnd) &&
+             (vertexHeap.freelistCount < PHYSAC_MAX_VERTICES))
     {
-        int index = (ptr - arrayRanges.vertexBegin) / sizeof(Vector2);
-        vertexStore.freelist[vertexStore.freelistCount ++] = index;
+        int index = (ptr - blocksRanges.vertexBegin) / sizeof(Vector2);
+        vertexHeap.freelist[vertexHeap.freelistCount ++] = index;
     }
     else
     {
