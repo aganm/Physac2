@@ -464,12 +464,12 @@ static int physicsManifoldsCount = 0;                       // Physics world cur
 //----------------------------------------------------------------------------------
 // Module Internal Functions Declaration
 //----------------------------------------------------------------------------------
-static int FindBodyIndex(PhysicsBody *body);                                                                // Calculate the index for a new physics body initialization
+static int FindBodyIndex(PhysicsBody *body);                                                                // Find the index for a new physics body initialization
 static PolygonData CreateRandomPolygon(float radius, int sides);                                            // Creates a random polygon shape with max vertex distance from polygon pivot
 static PolygonData CreateRectanglePolygon(Vector2 pos, Vector2 size);                                       // Creates a rectangle polygon shape based on a min and max positions
 static void *PhysicsLoop(void *arg);                                                                        // Physics loop thread function
 static void PhysicsStep(void);                                                                              // Physics steps calculations (dynamics, collisions and position corrections)
-static int FindAvailableManifoldIndex();                                                                    // Finds a valid index for a new manifold initialization
+static int FindManifoldIndex(PhysicsManifold *newManifold);                                                 // Finds the index for a new manifold initialization
 static PhysicsManifold *CreatePhysicsManifold(PhysicsBody *a, PhysicsBody *b);                              // Creates a new physics manifold to solve collision
 static void DestroyPhysicsManifold(PhysicsManifold *manifold);                                              // Unitializes and destroys a physics manifold
 static void SolvePhysicsManifold(PhysicsManifold *manifold);                                                // Solves a created physics manifold between two physics bodies
@@ -1366,31 +1366,12 @@ PHYSACDEF void SetPhysicsTimeStep(double delta)
 }
 
 // Finds a valid index for a new manifold initialization
-static int FindAvailableManifoldIndex()
+static int FindManifoldIndex(PhysicsManifold *manifold)
 {
     int index = -1;
-    for (int i = 0; i < PHYSAC_MAX_MANIFOLDS; i++)
-    {
-        int currentId = i;
-
-        // Check if current id already exist in other physics body
-        for (int k = 0; k < physicsManifoldsCount; k++)
-        {
-            if (contacts[k]->id.id == currentId)
-            {
-                currentId++;
-                break;
-            }
-        }
-
-        // If it is not used, use it as new physics body id
-        if (currentId == i)
-        {
-            index = i;
-            break;
-        }
+    if (manifold != NULL) {
+	    index = (((void *)manifold - (void *)manifoldHeap.blocks) /  sizeof(PhysicsManifold));
     }
-
     return index;
 }
 
@@ -1400,7 +1381,7 @@ static PhysicsManifold *CreatePhysicsManifold(PhysicsBody *a, PhysicsBody *b)
     PhysicsManifold *newManifold = (PhysicsManifold *)PHYSAC_MALLOC(sizeof(PhysicsManifold));
     usedMemory += sizeof(PhysicsManifold);
 
-    PhysicsRUID newId = { FindAvailableManifoldIndex() };
+    PhysicsRUID newId = { FindManifoldIndex(newManifold) };
     if (newId.id != -1)
     {
         // Initialize new manifold with generic values
