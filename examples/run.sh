@@ -5,12 +5,13 @@ function target() { # $1 = name
 	$1.c \
 	-o binaries/$1 \
 	-O2 \
+	-g -ggdb \
 	-std=gnu99 \
-	-s \
 	-iquote ../src \
 	`pkg-config --cflags --libs sdl2` \
 	-lm
-	 #-lopengl32 -lgdi32 -lwinmm
+	#-lopengl32 -lgdi32 -lwinmm
+	# -s \
 
 	./binaries/$1
 }
