@@ -399,7 +399,7 @@ PHYSACDEF void PhysacFree(void *ptr)
     else
     {
         #if defined(PHYSAC_DEBUG)
-            printf("[PHYSAC] error freeing a pointer not allocated by static allocator\n");
+            printf("[PHYSAC] error freeing a pointer not allocated by heap allocator\n");
         #endif
     }
 }
